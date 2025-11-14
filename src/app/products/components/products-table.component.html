@@ -9,7 +9,7 @@
         [ngrxFormControlState]="searchForm.controls.query" />
       <p-dropdown
         [ngrxFormControlState]="searchForm.controls.category!"
-        [options]="searchForm.userDefinedProperties?.['categories'] || []"
+        [options]="searchForm.userDefinedProperties['categories'] || []"
         [editable]="true"
         placeholder="Category"
         styleClass="w-40 border-none rounded-none"
