@@ -1,10 +1,10 @@
 import os
 import subprocess
 import requests
-from github import github
+from github import Github
 
 GITHUB_TOKEN = os.environ['GITHUB_TOKEN']
-AI_API_KEY = os.environ.get('AI_API_KEY') 
+AI_API_KEY = os.environ.get('AI_API_KEY')
 
 github_ref = os.environ.get('GITHUB_REF')
 
