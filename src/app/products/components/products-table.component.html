@@ -1,0 +1,142 @@
+<div class="p-4">
+  <!--search form-->
+  <div class="mb-4 flex gap-2">
+    <!-- Category PrimeNg dropdown -->
+    <ng-container *ngIf="searchForm">
+      <input
+        pInputText
+        placeholder="Search products..."
+        [ngrxFormControlState]="searchForm.controls.query" />
+      <p-dropdown
+        [ngrxFormControlState]="searchForm.controls.category!"
+        [options]="searchForm.userDefinedProperties?.['categories'] || []"
+        [editable]="true"
+        placeholder="Category"
+        styleClass="w-40 border-none rounded-none"
+        [showClear]="true">
+      </p-dropdown>
+    </ng-container>
+
+    <!--Reset Search Form Button-->
+    <button pButton type="button" icon="pi pi-refresh" class="p-button-text"
+      (click)="onResetSearchForm()">
+    </button>
+  </div>
+
+  <!-- Add Product button aligned to the right -->
+  <div class="flex justify-end">
+    <button
+      pButton
+      type="button"
+      label="Add Product"
+      icon="pi pi-plus"
+      (click)="onOpenAddDialog()">
+    </button>
+  </div>
+
+  <!--Spinner-->
+  <div *ngIf="loading" class="flex justify-center items-center py-10">
+    <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="8" fill="var(--surface-ground)"
+      animationDuration=".5s" />
+  </div>
+
+  <!-- Table -->
+  <p-table *ngIf="!loading" [value]="products" [paginator]="true" [rows]="10" responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Price</th>
+        <th>Description</th>
+        <th>Category</th>
+        <th>Edit</th>
+        <th>Delete</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-product>
+      <tr>
+        <td>{{product.id}}</td>
+        <td>{{product.title}}</td>
+        <td>{{product.price}}</td>
+        <td>{{product.description}}</td>
+        <td>{{product.category}}</td>
+        <td>
+          <button pButton icon="pi pi-pencil" class="p-button-text" (click)="onOpenEditDialog(product)">
+          </button>
+        </td>
+        <td>
+          <button pButton label="Delete" icon="pi pi-trash" (click)="onDeleteProduct(product.id)">
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!--Dialog for Add/Edit-->
+<p-dialog
+  [(visible)]="dialogVisible"
+  [modal]="true"
+  [header]="editMode ? 'Edit Product' : 'Add Product'"
+  [closable]="true"
+  (onHide)="onCloseDialog()">
+
+  <form class="flex flex-col gap-3">
+    <input
+      pInputText
+      placeholder="Title"
+      [ngrxFormControlState]="productForm!.controls.title"
+      [class.ng-invalid]="productForm!.controls.title.isInvalid && productForm!.controls.title.isTouched" />
+    <small *ngIf="productForm!.controls.title.isInvalid && productForm!.controls.title.isTouched" class="p-error">
+      Title is required
+    </small>
+
+    <input
+      pInputText
+      placeholder="Price"
+      type="number"
+      [ngrxFormControlState]="productForm!.controls.price"
+      [class.ng-invalid]="productForm!.controls.price.isInvalid && productForm!.controls.price.isTouched" />
+    <small *ngIf="productForm!.controls.price.isInvalid && productForm!.controls.price.isTouched" class="p-error">
+      Price is required
+    </small>
+
+
+    <p-dropdown
+      [ngrxFormControlState]="productForm!.controls.category"
+      [options]="productForm?.userDefinedProperties?.['categories'] || []"
+      [editable]="true"
+      placeholder="Category"
+      [showClear]="true"
+    ></p-dropdown>
+
+    <textarea
+      pInputTextarea
+      rows="3"
+      placeholder="Description"
+      [ngrxFormControlState]="productForm!.controls.description">
+    </textarea>
+
+    <button pButton type="button" label="Save" icon="pi pi-check" (click)="onSaveProduct()"></button>
+  </form>
+
+</p-dialog>
+
+<!--                                               ### NgRx Form Note ###
+
+                                      1. [ngrxFormControlState]
+                                      => ngrx-form automatically dispatches SetValueAction
+                                      2. onNgrxForms() in reducer.ts
+                                      => handle internal form actions(no need declare action manually)
+                                      3. wrapReducerWithFormStateUpdate(..., updateGroup<FormValue>({ ... }))
+                                      => ngrx-forms update, automatically run updateGroup
+
+-->
+<!--
+[Source] Event: [Where it happens] What happens
+wrapReducerWithFormStateUpdate() - Applies validators automatically after every state change
+switchMap() - Cancel previous request if new one comes in
+mergeMap() - Don't cancel, let all requests complete
+
+-->

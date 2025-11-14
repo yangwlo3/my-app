@@ -1,0 +1,17 @@
+<app-users-table
+  [filteredUsers]="filteredUsers"
+  [users]="users"
+  [loading]="loading"
+  [dialogVisible]="dialogVisible"
+  [editMode]="editMode"
+  [searchForm$]="searchForm$"
+  [userForm]="userForm"
+
+  (search)="onSearch()"
+  (onOpenAddDialog)="openAddDialog()"
+  (onFetchUsers)="fetchUsers()"
+  (onOpenEditDialog)="openEditDialog($event)"
+  (conConfirmDelete)="confirmDelete($event)"
+  (onSaveUser)="saveUser()"
+></app-users-table>
+

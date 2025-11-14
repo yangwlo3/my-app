@@ -1,0 +1,18 @@
+<app-products-table
+  [products]="filteredProducts"
+  [loading]="(loading$ | async) ?? false"
+  [dialogVisible]="(dialogVisible$ | async) ?? false"
+  [editMode]="editMode"
+  [productForm]="productForm$ | async"
+  [searchForm]="searchForm$ | async"
+
+  (openAddDialog)="onOpenAddDialog()"
+  (openEditDialog)="onOpenEditDialog($event)"
+  (saveProduct)="onSaveProduct()"
+  (deleteProduct)="onDeleteProduct($event)"
+  (closeDialog)="onCloseDialog()"
+  (resetSearchForm)="onResetSearchForm()"
+></app-products-table>
+
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>

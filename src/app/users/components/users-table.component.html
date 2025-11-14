@@ -1,0 +1,71 @@
+<div class="p-4">
+  <div class="flex items-center gap-2 mb-4">
+    <button pButton label="Fetch Users" icon="pi pi-refresh" (click)="fetchUsers()" [disabled]="loading"
+      class="p-button-sm"></button>
+
+    <span *ngIf="loading" class="text-gray-500">Loading...</span>
+  </div>
+
+  <!--search form-->
+  <ng-container *ngIf="searchForm$ | async as searchForm">
+    <form [ngrxFormState]="searchForm" class="flex gap-2">
+      <input
+        type="text"
+        placeholder="Search users..."
+        [ngrxFormControlState]="searchForm.controls.query"
+      />
+      <button pButton type="button" label="Search" icon="pi pi-search" (click)="onSearch()"></button>
+    </form>
+  </ng-container>
+
+  <!--add user form-->
+  <div class="flex justify-end p-4">
+    <button pButton label="Add User" icon="pi pi-plus" (click)="openAddDialog()"></button>
+  </div>
+
+  <p-table [value]="filteredUsers" [paginator]="true" [rows]="10" responsiveLayout="scroll" *ngIf="users.length">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Password</th>
+        <th>Edit</th>
+        <th>Delete</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-user>
+      <tr>
+        <td>{{user.id}}</td>
+        <td>{{user.username}}</td>
+        <td>{{user.email}}</td>
+        <td>{{user.password}}</td>
+        <td>
+          <button pButton icon="pi pi-pencil" class="p-button-text" (click)="openEditDialog(user)"></button>
+        </td>
+        <td>
+          <button pButton icon="pi pi-trash" class="p-button-text" (click)="confirmDelete(user.id)"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <div *ngIf="!users.length && !loading" class="text-gray-500 mt-4">
+    No users loaded yet. Click "Fetch Users" to load data.
+  </div>
+
+  <p-dialog [(visible)]="dialogVisible" [modal]="true" [header]="editMode? 'Edit User' : 'Add User'" [closable]="true">
+    <form [formGroup]="userForm" class="flex flex-col gap-3">
+      <input pInputText placeholder="Username" formControlName="username" />
+      <input pInputText placeholder="Email" formControlName="email" />
+      <input pInputText placeholder="Password" formControlName="password" />
+
+      <button pButton label="Save" icon="pi pi-check" (click)="saveUser()"></button>
+    </form>
+  </p-dialog>
+</div>
+
+
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
